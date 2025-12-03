@@ -159,11 +159,7 @@ let gameLoopStarted = false;
 
 socket.on('connect', () => {
     myId = socket.id;
-    
-    if (!gameLoopStarted) {
-        gameLoopStarted = true;
-        gameLoop();
-    }
+    console.log("Socket conectado, ID:", myId);
 });
 
 socket.on('connect', () => {
@@ -189,6 +185,7 @@ socket.on('newMessage', (message) => {
 });
 
 window.addEventListener('keydown', function(event) {
+    if (!event.key) return;
     const key = event.key.toLowerCase();
     const me = gameState.players[myId];
 
@@ -357,9 +354,10 @@ window.addEventListener('keydown', function(event) {
             break;
     }
 });
-
 window.addEventListener('keyup', function(event) {
+    if (!event.key) return;
     const key = event.key.toLowerCase();
+
     switch (key) {
         case 'w':
         case 'arrowup':
@@ -2079,6 +2077,7 @@ function getZombieAbilitiesTabRect() {
     };
 }
 
+
 function gameLoop() {
     if (myId && gameState.players[myId]) {
         const me = gameState.players[myId];
@@ -2101,6 +2100,10 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
+function startGame(playerName) {
+    console.log("Jogo iniciado para:", playerName);
+    socket.emit('playerJoined', { name: playerName });
+}
 
 socket.on('connect', () => {
     myId = socket.id;
