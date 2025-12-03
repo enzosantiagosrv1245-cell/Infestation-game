@@ -1,6 +1,5 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-// const socket = io(); // Assuming socket is initialized in HTML
 
 (function setup() {
     const chatInput = document.getElementById('chatInput');
@@ -10,7 +9,6 @@ const ctx = canvas.getContext('2d');
         margin: '0',
         overflow: 'hidden'
     });
-    // Estilos do chatInput foram movidos para o style.css para melhor organização
     chatInput.maxLength = 57;
 
     function resizeCanvas() {
@@ -31,7 +29,7 @@ const human = loadImage('Sprites/Human.png');
 const zombie = loadImage('Sprites/Zombie.png');
 const box = loadImage('Sprites/Box.png');
 const grass = loadImage('Sprites/Grass.png');
-const grass2 = loadImage('Sprites/Grass2.png'); // NOVO: Carrega a imagem da Grass2
+const grass2 = loadImage('Sprites/Grass2.png');
 const street = loadImage('Sprites/Street.png');
 const sand = loadImage('Sprites/Sand.png');
 const sea = loadImage('Sprites/Sea.png');
@@ -41,7 +39,7 @@ const ductSprite = loadImage('Sprites/Duct.png');
 const atmSprite = loadImage('Sprites/ATM.png');
 const cardSprite = loadImage('Sprites/Card.png');
 const floors = loadImage('Sprites/Floor.png');
-const floor2 = loadImage('Sprites/Floor2.png'); // NOVO: Carrega a imagem do novo chão
+const floor2 = loadImage('Sprites/Floor2.png');
 const garageFloor = loadImage('Sprites/garageFloor.png');
 const smallBed = loadImage('Sprites/smallBed.png');
 const bigTable = loadImage('Sprites/bigTable.png');
@@ -52,7 +50,7 @@ const grenadeSprite = loadImage('Sprites/Grenade.png');
 const invisibilityCloakSprite = loadImage('Sprites/InvisibilityCloak.png');
 const antidoteSprite = loadImage('Sprites/Antidote.png');
 const magicAntidoteSprite = loadImage('Sprites/MagicAntidote.png');
-const magicEggSprite = loadImage('Sprites/MagicEgg.png'); // NOVO: Carrega a imagem do Magic Egg
+const magicEggSprite = loadImage('Sprites/MagicEgg.png');
 const trapSprite = loadImage('Sprites/Trap.png');
 const mineSprite = loadImage('Sprites/Mine.png');
 const gravityGloveSprite = loadImage('Sprites/GravityGlove.png');
@@ -64,8 +62,8 @@ const inventoryUpgradeSprite = loadImage('Sprites/Slot.png');
 const runningTennisSprite = loadImage('Sprites/runningTennis.png');
 const bowSprite = loadImage('Sprites/Bow.png');
 const arrowSprite = loadImage('Sprites/Arrow.png');
-const blowdartSprite = loadImage('Sprites/Blowdart.png'); // NOVO: Sprite do Blowdart
-const blowdartArrowSprite = loadImage('Sprites/BlowdartArrow.png'); // NOVO: Sprite da flecha do Blowdart
+const blowdartSprite = loadImage('Sprites/Blowdart.png');
+const blowdartArrowSprite = loadImage('Sprites/BlowdartArrow.png');
 const sharkSprite = loadImage('Sprites/Shark.png');
 const gemSprite = loadImage('Sprites/Gem.png');
 const angelWingsSprite = loadImage('Sprites/AngelWings.png');
@@ -89,7 +87,7 @@ const itemSprites = {
     card: cardSprite,
     antidote: antidoteSprite,
     magicAntidote: magicAntidoteSprite,
-    magicEgg: magicEggSprite, // NOVO: Adiciona o sprite do Magic Egg
+    magicEgg: magicEggSprite,
     normalGlove: GloveSprite,
     gravityGlove: gravityGloveSprite,
     grenade: grenadeSprite,
@@ -98,7 +96,7 @@ const itemSprites = {
     inventoryUpgrade: inventoryUpgradeSprite,
     runningTennis: runningTennisSprite,
     bow: bowSprite,
-    blowdart: blowdartSprite, // NOVO: Adiciona o sprite do Blowdart
+    blowdart: blowdartSprite,
     angelWings: angelWingsSprite,
     fishingRod: fishingRodSprite
 };
@@ -123,7 +121,7 @@ let myId = null;
 let gameState = {
     players: {},
     arrows: [],
-    blowdartArrows: [], // NOVO: Array para flechas do Blowdart
+    blowdartArrows: [],
     sharks: [],
     timeLeft: 120,
     startTime: 60,
@@ -161,7 +159,6 @@ const MAX_MESSAGES = 10;
 
 socket.on('connect', () => {
     myId = socket.id;
-    // The login screen from your HTML should handle user identification now.
 });
 
 socket.on('gameStateUpdate', (serverState) => {
@@ -213,7 +210,7 @@ window.addEventListener('keydown', function(event) {
     }
 
     if (key === 'b') {
-        if (me) { // 'me' é a variável do seu jogador
+        if (me) { 
             isMenuOpen = !isMenuOpen;
             if (isMenuOpen) {
                 if (me.role === 'zombie') {
@@ -247,7 +244,6 @@ window.addEventListener('keydown', function(event) {
         if (key === 'q') {
             socket.emit('rotateCarriedObject', 'left');
         } else if (key === 'e') {
-            // Ação de rotação para 'E' é tratada aqui especificamente para a luva
         }
     }
 
@@ -297,14 +293,11 @@ window.addEventListener('keydown', function(event) {
                     type: 'toggle_angel_wings_flight'
                 });
             } else if (me && me.role === 'zombie') {
-                // A ação de se esconder é tratada no 'interact' no servidor,
-                // mas a de usar item especial continua aqui.
                 if (me.zombieAbility) {
                     socket.emit('playerAction', {
                         type: 'zombie_item'
                     });
                 } else {
-                    // Se não tiver habilidade, a tecla E interage (esconderijo)
                     socket.emit('playerAction', {
                         type: 'interact'
                     });
@@ -430,7 +423,6 @@ canvas.addEventListener('mousedown', function(event) {
         const me = gameState.players[myId];
         if (!me) return;
 
-        // NOVO: Lógica para fechar a loja no 'X'
         const menuWidth = 1500,
             menuHeight = 900;
         const menuX = (canvas.width - menuWidth) / 2,
@@ -477,7 +469,7 @@ canvas.addEventListener('mousedown', function(event) {
                 isNearATM = distance < 250;
             }
 
-            if (!isNearATM) { // Só permite clicar nas abas normais se estiver longe
+            if (!isNearATM) {
                 const functionsTabBtn = getFunctionsTabRect();
                 const itemsTabBtn = getItemsTabRect();
 
@@ -489,7 +481,7 @@ canvas.addEventListener('mousedown', function(event) {
                     activeMenuTab = 'items';
                     return;
                 }
-            } else { // Permite clicar na aba exclusiva se estiver perto
+            } else { 
                 const rareItemsTabBtn = getRareItemsTabRect(true);
                 if (isClickInside(mouse, rareItemsTabBtn)) {
                     activeMenuTab = 'exclusive_items';
@@ -608,19 +600,16 @@ function draw() {
     ctx.scale(zoomLevel, zoomLevel);
     ctx.translate(-cameraX, -cameraY);
 
-    // ALTERADO: Lógica para desenhar o mapa e sua versão espelhada com o novo chão
     const drawMapBackground = (floorImg, grassImg) => {
         ctx.drawImage(grassImg, 0, 0, 3100, 2000);
         ctx.drawImage(floorImg, 200, 200, 2697, 1670);
         ctx.drawImage(sea, 4965, 0, 2600, 2000);
     };
 
-    // Desenha o mapa original
     drawMapBackground(floors, grass);
 
     ctx.drawImage(garageFloor, 2000, 1400, 700, 600);
 
-    // Desenha o mapa espelhado (agora sem o chão da garagem e com o chão 2)
     ctx.save();
     ctx.translate(0, 4000);
     ctx.scale(1, -1);
@@ -639,7 +628,6 @@ function draw() {
         }
     }
 
-    // ALTERADO: Lógica para desenhar a areia/rua e sua versão espelhada
     const drawTopLayers = () => {
         ctx.drawImage(sand, 4080, 0, 1850, 2000);
         ctx.drawImage(street, 3090, 0, 1000, 2000);
@@ -651,7 +639,6 @@ function draw() {
     drawTopLayers();
     ctx.restore();
 
-    // ALTERADO: Desenha os esconderijos DEPOIS da rua para ficarem por cima
     if (gameState.hidingSpots) {
         for (const spot of gameState.hidingSpots) {
             if (hidingSpotSprite.complete) {
@@ -676,17 +663,13 @@ function draw() {
             if (sprite) {
 
                 if (item.isSinking) {
-                    // Item está afundando
                     ctx.save();
 
                     const progress = item.sinkingProgress || 0;
-                    const scale = 1 - progress; // Escala diminui de 1 para 0
+                    const scale = 1 - progress;
 
-                    // 1. Efeito de escurecer e desaparecer
-                    ctx.globalAlpha = 1 - progress; // Opacidade diminui de 1 para 0
-                    ctx.filter = `brightness(${100 * (1 - progress)}%)`; // Brilho diminui de 100% para 0%
-
-                    // 2. Efeito de encolher (mantendo o centro)
+                    ctx.globalAlpha = 1 - progress;
+                    ctx.filter = `brightness(${100 * (1 - progress)}%)`;
                     const drawWidth = item.width * scale;
                     const drawHeight = item.height * scale;
                     const drawX = item.x + (item.width - drawWidth) / 2;
@@ -696,7 +679,6 @@ function draw() {
 
                     ctx.restore();
                 } else {
-                    // Item normal, fora da água
                     ctx.drawImage(sprite, item.x, item.y, item.width, item.height);
                 }
             }
@@ -754,7 +736,6 @@ function draw() {
             if (sprite) {
 
                 if (item.isSinking) {
-                    // Objeto está afundando
                     ctx.save();
 
                     const progress = item.sinkingProgress || 0;
@@ -768,14 +749,12 @@ function draw() {
                     const drawX = item.x + (item.width - drawWidth) / 2;
                     const drawY = item.y + (item.height - drawHeight) / 2;
 
-                    // A rotação também deve ser aplicada
                     ctx.translate(drawX + drawWidth / 2, drawY + drawHeight / 2);
                     ctx.rotate(item.rotation);
                     ctx.drawImage(sprite, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
 
                     ctx.restore();
                 } else {
-                    // Objeto normal, fora da água
                     ctx.save();
                     if (item.id === 'atm') {
                         ctx.shadowColor = 'rgba(255, 255, 255, 1)';
@@ -1007,13 +986,9 @@ function draw() {
 
                 ctx.strokeStyle = 'black';
                 ctx.lineWidth = 5;
-
-                // Draw DEV tag in red
                 ctx.fillStyle = 'red';
                 ctx.strokeText(devTag, devTagX, nameY);
                 ctx.fillText(devTag, devTagX, nameY);
-
-                // Draw player name
                 ctx.fillStyle = (player.role === 'zombie' || player.isSpying) ? '#2ecc71' : 'white';
                 ctx.strokeText(playerName, playerNameX, nameY);
                 ctx.fillText(playerName, playerNameX, nameY);
@@ -1033,10 +1008,10 @@ function draw() {
 
     if (gameState.floatingTexts) {
         for (const textInfo of gameState.floatingTexts) {
-            const life = (Date.now() - textInfo.createdAt) / 2000; // 0 a 1 em 2 segundos
+            const life = (Date.now() - textInfo.createdAt) / 2000;
             if (life > 1) continue;
             const alpha = 1 - life;
-            const yOffset = -life * 50; // O texto sobe
+            const yOffset = -life * 50;
             ctx.save();
             ctx.globalAlpha = alpha;
             ctx.fillStyle = 'gold';
@@ -1049,8 +1024,6 @@ function draw() {
             ctx.restore();
         }
     }
-
-    // ALTERADO: Lógica para desenhar os guarda-sóis e suas versões espelhadas
     const sunshadeRect1 = {
         x: 4350,
         y: 600,
@@ -1085,8 +1058,6 @@ function draw() {
     }
     ctx.drawImage(sunshade, sunshadeRect2.x, sunshadeRect2.y, sunshadeRect2.width, sunshadeRect2.height);
     ctx.restore();
-
-    // Guarda-sóis espelhados
     const mirroredSunshadeRect1 = { ...sunshadeRect1,
         y: 4000 - sunshadeRect1.y - sunshadeRect1.height
     };
@@ -1124,8 +1095,6 @@ function draw() {
             ctx.restore();
         }
     }
-
-    // NOVO: Desenha as flechas do Blowdart
     for (const arrow of gameState.blowdartArrows) {
         if (blowdartArrowSprite.complete) {
             ctx.save();
@@ -1167,8 +1136,6 @@ function draw() {
 }
 
 function drawProfile() {
-    // Este é um placeholder para a interface do perfil.
-    // Você pode adicionar o código para desenhar a tela de perfil aqui.
 }
 
 function drawInstructionsMenu() {
@@ -1177,7 +1144,6 @@ function drawInstructionsMenu() {
     const menuX = (canvas.width - menuWidth) / 2;
     const menuY = (canvas.height - menuHeight) / 2;
 
-    // Background
     ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
     ctx.strokeStyle = '#555';
     ctx.lineWidth = 5;
@@ -1186,7 +1152,6 @@ function drawInstructionsMenu() {
     ctx.fill();
     ctx.stroke();
 
-    // Close Button (X)
     const closeButtonSize = 40;
     const closeButtonPadding = 20;
     const closeX = menuX + menuWidth - closeButtonSize - closeButtonPadding;
@@ -1197,18 +1162,15 @@ function drawInstructionsMenu() {
     ctx.textBaseline = 'middle';
     ctx.fillText('X', closeX + closeButtonSize / 2, closeY + closeButtonSize / 2);
 
-    // Title
     ctx.textAlign = 'center';
     ctx.font = 'bold 52px "Trebuchet MS", sans-serif';
     ctx.fillStyle = '#FFFFFF';
     ctx.fillText('Instructions / Instruções', canvas.width / 2, menuY + 80);
 
-    // --- Content ---
     ctx.textAlign = 'left';
     const contentX = menuX + 60;
     let currentY = menuY + 180;
 
-    // Objective Section
     ctx.font = 'bold 28px "Trebuchet MS", sans-serif';
     ctx.fillStyle = '#FFFFFF';
     ctx.fillText('Objective / Objetivo', contentX, currentY);
@@ -1229,7 +1191,6 @@ function drawInstructionsMenu() {
     ctx.fillText('•Zumbis: Infecte todos os humanos antes que o tempo acabe.', contentX, currentY);
     currentY += 80;
 
-    // Controls Section
     ctx.font = 'bold 28px "Trebuchet MS", sans-serif';
     ctx.fillStyle = '#FFFFFF';
     ctx.fillText('Controls / Controles', contentX, currentY);
@@ -1261,9 +1222,8 @@ function drawInstructionsMenu() {
 }
 
 function drawHudBackgrounds() {
-    ctx.save(); // Isola o estado de desenho da HUD
+    ctx.save(); 
 
-    // Estilo aprimorado para os fundos da HUD
     const mainGradient = ctx.createLinearGradient(0, 10, 0, 100);
     mainGradient.addColorStop(0, 'rgba(30, 30, 30, 0.85)');
     mainGradient.addColorStop(1, 'rgba(10, 10, 10, 0.75)');
@@ -1274,43 +1234,39 @@ function drawHudBackgrounds() {
     ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
     ctx.shadowBlur = 10;
 
-    // HUD do topo (timer e status)
     const topHudWidth = 400;
     ctx.beginPath();
     ctx.roundRect(canvas.width / 2 - topHudWidth / 2, 10, topHudWidth, 90, [12]);
     ctx.fill();
     ctx.stroke();
 
-    // HUD de gemas
     const coinHudWidth = 180;
     ctx.beginPath();
     ctx.roundRect(canvas.width - coinHudWidth - 15, 15, coinHudWidth, 50, [12]);
     ctx.fill();
     ctx.stroke();
 
-    // HUD de velocidade
     const rightHudWidth = 200;
     ctx.beginPath();
     ctx.roundRect(canvas.width - rightHudWidth - 15, canvas.height - 75, rightHudWidth, 60, [12]);
     ctx.fill();
     ctx.stroke();
 
-    ctx.restore(); // Restaura o estado do canvas
+    ctx.restore();
 }
 
 
 function drawHudText(me) {
-    ctx.save(); // Isola o estado de desenho do texto da HUD
+    ctx.save();
 
     ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle'; // Alinha verticalmente no meio
+    ctx.textBaseline = 'middle';
     ctx.fillStyle = 'white';
     ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
     ctx.shadowBlur = 5;
     ctx.shadowOffsetX = 2;
     ctx.shadowOffsetY = 2;
 
-    // --- HUD Superior ---
     const topHudCenterY = 10 + 90 / 2;
     ctx.font = 'bold 40px Arial';
     if (gameState.gamePhase === 'waiting') {
@@ -1342,7 +1298,6 @@ function drawHudText(me) {
         ctx.fillText(roleText, canvas.width / 2, topHudCenterY + 25);
     }
 
-    // --- HUD de Gemas (ALTERADO para centralizar) ---
     ctx.font = 'bold 30px Arial';
     ctx.fillStyle = '#FFD700';
 
@@ -1367,8 +1322,6 @@ function drawHudText(me) {
     ctx.textAlign = 'left';
     ctx.fillText(gemCountText, textX, hudCenterY);
 
-
-    // --- HUD de Velocidade ---
     ctx.textAlign = 'right';
     ctx.fillStyle = 'white';
     ctx.font = 'bold 24px Arial';
@@ -1472,7 +1425,6 @@ function drawChat() {
     const chatBoxX = 15;
     const chatBoxY = canvas.height - chatInputAndMargin - chatBoxHeight;
 
-    // Fundo com gradiente e sombra
     const gradient = ctx.createLinearGradient(0, chatBoxY, 0, chatBoxY + chatBoxHeight);
     gradient.addColorStop(0, 'rgba(20, 20, 20, 0.8)');
     gradient.addColorStop(1, 'rgba(5, 5, 5, 0.8)');
@@ -1486,7 +1438,7 @@ function drawChat() {
     ctx.fill();
     ctx.stroke();
 
-    ctx.restore(); // Resetar sombra para o texto
+    ctx.restore();
     ctx.save();
 
     ctx.font = '18px Arial';
@@ -1494,18 +1446,17 @@ function drawChat() {
     ctx.textBaseline = 'top';
     ctx.beginPath();
     ctx.rect(chatBoxX, chatBoxY, chatBoxWidth, chatBoxHeight);
-    ctx.clip(); // Impede que o texto saia da caixa
+    ctx.clip(); 
 
     chatMessages.forEach((msg, index) => {
         const messageY = chatBoxY + chatBoxPadding + (index * lineHeight);
         const messageX = chatBoxX + chatBoxPadding;
 
-        // Desenha o nome
+  
         ctx.font = 'bold 18px Arial';
         ctx.fillStyle = msg.name === 'Server' ? '#FFD700' : (msg.isZombie ? '#2ecc71' : '#3498db');
         ctx.fillText(msg.name + ':', messageX, messageY);
 
-        // Desenha a mensagem
         ctx.font = '18px Arial';
         ctx.fillStyle = '#f0f0f0';
         const nameWidth = ctx.measureText(msg.name + ': ').width;
@@ -1516,7 +1467,7 @@ function drawChat() {
 
 
 function drawMenu() {
-    ctx.save(); // CORREÇÃO DE BUG: Isola o estado de desenho do menu
+    ctx.save();
 
     const me = gameState.players[myId];
     if (!me) {
@@ -1529,7 +1480,7 @@ function drawMenu() {
         drawHumanMenu(me);
     }
 
-    ctx.restore(); // CORREÇÃO DE BUG: Restaura o estado após desenhar o menu
+    ctx.restore(); 
 }
 
 function drawZombieMenu(me) {
@@ -1544,7 +1495,6 @@ function drawZombieMenu(me) {
     ctx.lineWidth = 5;
     ctx.strokeRect(menuX, menuY, menuWidth, menuHeight);
 
-    // NOVO: Botão 'X' para fechar
     const closeButtonSize = 40;
     const closeButtonPadding = 20;
     const closeX = menuX + menuWidth - closeButtonSize - closeButtonPadding;
@@ -1587,8 +1537,6 @@ function drawZombieMenu(me) {
                 ctx.font = '14px Arial';
                 ctx.fillStyle = canAfford ? '#ccc' : '#888';
                 ctx.fillText(btn.description, btn.rect.x + btn.rect.width / 2, btn.rect.y + 65);
-
-                // Preço (ALTERADO para centralizar)
                 ctx.font = '24px Arial';
                 ctx.fillStyle = canAfford ? 'gold' : 'red';
                 const costNumber = `${btn.price}`;
@@ -1632,14 +1580,12 @@ function drawHumanMenu(me) {
     const menuX = (canvas.width - menuWidth) / 2,
         menuY = (canvas.height - menuHeight) / 2;
 
-    // ALTERADO: Cor de fundo e borda agora são sempre as mesmas
     ctx.fillStyle = 'rgba(17, 14, 14, 0.90)';
     ctx.strokeStyle = '#616161ff';
     ctx.fillRect(menuX, menuY, menuWidth, menuHeight);
     ctx.lineWidth = 5;
     ctx.strokeRect(menuX, menuY, menuWidth, menuHeight);
 
-    // NOVO: Botão 'X' para fechar
     const closeButtonSize = 40;
     const closeButtonPadding = 20;
     const closeX = menuX + menuWidth - closeButtonSize - closeButtonPadding;
@@ -1654,9 +1600,8 @@ function drawHumanMenu(me) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    // ALTERADO: Desenha as abas condicionalmente com a cor correta
     if (isNearATM) {
-        const rareItemsTabBtn = getRareItemsTabRect(true); // true indica que é a única aba
+        const rareItemsTabBtn = getRareItemsTabRect(true); 
         ctx.fillStyle = activeMenuTab === 'exclusive_items' ? '#000000ff' : '#232323ff';
         ctx.fillRect(rareItemsTabBtn.x, rareItemsTabBtn.y, rareItemsTabBtn.width, rareItemsTabBtn.height);
         ctx.fillStyle = 'white';
@@ -1705,7 +1650,6 @@ function drawHumanMenu(me) {
                 ctx.fillStyle = isTaken || isLocked ? '#777' : (canAfford ? '#ccc' : '#888');
                 ctx.fillText(btn.description, btn.rect.x + btn.rect.width / 2, btn.rect.y + 65);
 
-                // Preço (ALTERADO para centralizar)
                 ctx.font = '24px Arial';
                 ctx.fillStyle = canAfford && !isLocked ? 'gold' : 'red';
                 const costNumber = `${cost}`;
@@ -1813,8 +1757,6 @@ function drawHumanMenu(me) {
             ctx.font = '12px Arial';
             ctx.fillStyle = canBuy ? '#ccc' : '#888';
             ctx.fillText(btn.description, textCenterX, btn.rect.y + 85);
-
-            // Preço (ALTERADO para centralizar)
             ctx.font = '24px Arial';
             ctx.fillStyle = canAfford ? 'gold' : 'red';
             const costNumber = `${btn.price}`;
@@ -2105,12 +2047,11 @@ function getItemsTabRect() {
     };
 }
 
-// ALTERADO: A função agora pode ajustar a posição se for a única aba
 function getRareItemsTabRect(isOnlyTab = false) {
     const mX = (canvas.width - 1500) / 2,
         mY = (canvas.height - 900) / 2;
     return {
-        x: isOnlyTab ? mX + 10 : mX + 430, // Se for a única, começa na esquerda
+        x: isOnlyTab ? mX + 10 : mX + 430, 
         y: mY + 10,
         width: 200,
         height: 60
@@ -2151,7 +2092,6 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
-// gameLoop();
 
 function startGame() {
     gameLoop();

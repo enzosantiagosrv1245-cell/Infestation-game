@@ -70,7 +70,6 @@ const SAND_AREA = {
     width: 1850,
     height: 2000
 };
-// ALTERADO: Largura do mar aumentada
 const SEA_AREA = {
     x: 4965,
     y: 0,
@@ -81,7 +80,7 @@ const SEA_AREA = {
 const SINKING_AREA = {
     x: 5165,
     y: 0,
-    width: 2400, // <<-- Aumentamos a largura (era 2600)
+    width: 2400,
     height: 4000
 };
 
@@ -151,7 +150,6 @@ const ZOMBIE_ABILITY_COSTS = {
     mine: 50
 };
 
-// Categorias de Colisão (RESTAURADO AO ORIGINAL)
 const playerCategory = 0x0002;
 const wallCategory = 0x0004;
 const movableObjectCategory = 0x0008;
@@ -159,7 +157,6 @@ const cannonballCategory = 0x0010;
 
 function getDensityById(id) {
     switch (id) {
-        // ALTERADO: Densidade do carro muito aumentada
         case 'car':
             return 0.5;
         case 'big_table':
@@ -188,7 +185,7 @@ function createPlayerBody(player) {
         label: 'player',
         collisionFilter: {
             category: playerCategory,
-            mask: 0xFFFFFFFF // RESTAURADO: Colide com tudo
+            mask: 0xFFFFFFFF
         }
     });
     body.playerId = player.id;
@@ -250,7 +247,7 @@ function initializeGame() {
     gameState = {
         players: currentPlayers,
         arrows: [],
-        blowdartArrows: [], // NOVO: Array para flechas do Blowdart
+        blowdartArrows: [],
         drones: {},
         grenades: [],
         groundItems: [],
@@ -308,7 +305,7 @@ function initializeGame() {
             y: 200,
             width: 2697,
             height: 1670,
-            wallThickness: 70, // ALTERADO: Espessura da parede aumentada
+            wallThickness: 70,
             walls: []
         },
         garage: {
@@ -316,16 +313,13 @@ function initializeGame() {
             y: 1400,
             width: 700,
             height: 600,
-            wallThickness: 70, // ALTERADO: Espessura da parede aumentada
+            wallThickness: 70,
             walls: []
         },
     };
     createWorldBodies();
     createSharks();
 }
-
-// ** INÍCIO DAS ALTERAÇÕES **
-// Função para adicionar gemas e aumentar a velocidade do humano
 function addGems(player, amount) {
     if (!player || amount <= 0) {
         if (player) player.gems += amount;
@@ -344,15 +338,13 @@ function addGems(player, amount) {
                 speedIncrease += Math.random() * (0.02 - 0.01) + 0.01;
             }
             player.speed += speedIncrease;
-            player.originalSpeed += speedIncrease; // Aplica o bônus na velocidade base também
+            player.originalSpeed += speedIncrease; 
         }
     } else {
-        // Se não for humano (ex: zumbi pegando gemas de humano infectado), apenas adiciona
         player.gems += amount;
     }
 }
 
-// Função para remover gemas e diminuir a velocidade do zumbi
 function removeGems(player, amount) {
     if (!player || amount <= 0) return;
 
@@ -372,8 +364,6 @@ function removeGems(player, amount) {
         }
     }
 }
-// ** FIM DAS ALTERAÇÕES **
-
 function createSharks() {
     gameState.sharks = [];
     for (let i = 0; i < 5; i++) {
@@ -386,7 +376,7 @@ function createSharks() {
             y: SEA_AREA.y + Math.random() * (SEA_AREA.height - 60),
             speed: (SHARK_BASE_SPEED + Math.random()) * (1 / sizeMultiplier),
             rotation: 0,
-            state: 'patrolling', // states: patrolling, attacking, sleeping
+            state: 'patrolling', 
             pauseUntil: 0,
             targetPlayerId: null,
             patrolTarget: null,
@@ -431,7 +421,6 @@ function createWorldBodies() {
     allBodies.push(...boundaries);
 
     const originalObjectData = [{
-        // ... a lista de todos os objetos continua a mesma aqui ...
         id: 'atm',
         x: 3080,
         y: 1200,
@@ -570,7 +559,6 @@ function buildWalls(structure) {
     s.walls = [];
 
     if (s === gameState.house) {
-        // --- PARTE 1: DEFINIÇÃO DAS PAREDES DA CASA ORIGINAL (NÃO MEXA AQUI) ---
         const originalHouseWalls = [
             { x: s.x, y: s.y, width: s.width, height: wt },
             { x: s.x, y: s.y + s.height - wt - 200, width: s.width - 1300, height: wt },
@@ -596,10 +584,7 @@ function buildWalls(structure) {
         ];
         s.walls.push(...originalHouseWalls);
 
-        // --- PARTE 2: DEFINIÇÃO DAS PAREDES DA CASA DUPLICADA (MODIFICADA) ---
-        // ALTERADO: Estrutura da casa de baixo modificada
         const mirroredHouseWalls = [
-            // As coordenadas 'y' são calculadas para espelhar a posição da parede original
             { x: s.x, y: WORLD_HEIGHT - s.y - wt, width: s.width, height: wt },
             { x: s.x, y: WORLD_HEIGHT - (s.y + s.height - wt - 200) - wt, width: s.width - 1300, height: wt },
             { x: s.x, y: WORLD_HEIGHT - s.y - 820, width: wt, height: 820 },
@@ -607,17 +592,15 @@ function buildWalls(structure) {
             { x: s.x + s.width - wt, y: WORLD_HEIGHT - s.y - 250, width: wt, height: 250 },
             { x: s.x + s.width - wt, y: WORLD_HEIGHT - (s.y + 650) - ((s.height - 770) - 650), width: wt, height: (s.height - 770) - 650 },
             { x: s.x + 900, y: WORLD_HEIGHT - s.y - 470, width: wt, height: 470 },
-            // { x: s.x + 600, y: WORLD_HEIGHT - (s.y + 1020) - 450, width: wt, height: 450 }, // <-- PAREDE REMOVIDA PARA CRIAR UM CORREDOR
-            { x: s.x + 1500, y: WORLD_HEIGHT - s.y - 300, width: wt, height: 300 },
+            { x: s.x + 600, y: WORLD_HEIGHT - (s.y + 1020) - 450, width: wt, height: 450 }, 
             { x: s.x + 1338, y: WORLD_HEIGHT - (s.y + 1030) - 440, width: wt, height: 440 },
             { x: s.x + 2200, y: WORLD_HEIGHT - s.y - 470, width: wt, height: 470 },
             { x: s.x + 2195, y: WORLD_HEIGHT - (s.y + 750) - 150, width: wt, height: 150 },
             { x: s.x, y: WORLD_HEIGHT - (s.y + 400) - wt, width: 700, height: wt },
             { x: s.x + 1800, y: WORLD_HEIGHT - (s.y + 400) - wt, width: 270, height: wt },
             { x: s.x + 250, y: WORLD_HEIGHT - (s.y + 1020) - wt, width: 850, height: wt },
-            // { x: s.x + 1150, y: WORLD_HEIGHT - (s.y + 400) - wt, width: 720, height: wt }, // <-- PAREDE LONGA SUBSTITUÍDA PELAS DUAS ABAIXO
-            { x: s.x + 1150, y: WORLD_HEIGHT - (s.y + 400) - wt, width: 300, height: wt }, // <-- Pedaço 1 da parede, criando uma porta
-            { x: s.x + 1570, y: WORLD_HEIGHT - (s.y + 400) - wt, width: 300, height: wt }, // <-- Pedaço 2 da parede, criando uma porta
+            { x: s.x + 1150, y: WORLD_HEIGHT - (s.y + 400) - wt, width: 300, height: wt }, 
+            { x: s.x + 1570, y: WORLD_HEIGHT - (s.y + 400) - wt, width: 300, height: wt }, 
             { x: s.x + 1800, y: WORLD_HEIGHT - s.y - (400 + wt), width: wt, height: 400 + wt },
             { x: s.x, y: WORLD_HEIGHT - (s.y + 750) - wt, width: 550, height: wt },
             { x: s.x + 1330, y: WORLD_HEIGHT - (s.y + 830) - wt, width: 533, height: wt },
@@ -627,7 +610,6 @@ function buildWalls(structure) {
         s.walls.push(...mirroredHouseWalls);
 
     } else if (s === gameState.garage) {
-        // --- PARTE 3: DEFINIÇÃO DAS PAREDES DA GARAGEM (NÃO É DUPLICADA) ---
         const doorHeight = 150;
         const wallChunk = (s.height - doorHeight) / 2;
         s.walls.push({ x: s.x + 1400, y: s.y, width: s.width - 200, height: wt });
@@ -708,8 +690,8 @@ function createNewPlayer(socket) {
         isSleeping: false,
         sleepUntil: 0,
         rhinocerosCooldownUntil: 0,
-        slowedUntil: null, // NOVO: Para efeito de lentidão
-        originalSpeedBeforeSlow: null, // NOVO: Para restaurar a velocidade
+        slowedUntil: null, 
+        originalSpeedBeforeSlow: null, 
         input: {
             movement: {
                 up: false,
@@ -767,7 +749,7 @@ function dropHeldItem(player) {
                 dropData.ammo = typeof itemToDrop.ammo === 'number' ? itemToDrop.ammo : DRONE_MAX_AMMO;
                 break;
             case 'bow':
-            case 'blowdart': // NOVO: Blowdart também pode ter dados específicos
+            case 'blowdart':
                 dropData.width = 70;
                 dropData.height = 20;
                 break;
@@ -954,25 +936,19 @@ function updateGameState() {
     for (let i = gameState.groundItems.length - 1; i >= 0; i--) {
         const item = gameState.groundItems[i];
 
-        // Se o item está na área do mar
         if (isColliding(item, SINKING_AREA)) {
-            // Se ele ainda não começou a afundar, marque o início
             if (!item.isSinking) {
                 item.isSinking = true;
                 item.sinkingStartTime = now;
             }
         }
-
-        // Se o item está afundando, atualize seu progresso
         if (item.isSinking) {
             const elapsed = now - item.sinkingStartTime;
             const progress = elapsed / SINKING_DURATION;
 
             if (progress >= 1) {
-                // Se o tempo acabou, remova o item do jogo
                 gameState.groundItems.splice(i, 1);
             } else {
-                // Caso contrário, envie o progresso para o cliente
                 item.sinkingProgress = progress;
             }
         }
@@ -980,34 +956,28 @@ function updateGameState() {
 
     for (let i = gameState.objects.length - 1; i >= 0; i--) {
         const obj = gameState.objects[i];
-        const body = bodiesMap[obj.uniqueId]; // Pega o corpo físico do objeto
+        const body = bodiesMap[obj.uniqueId]; 
 
-        // Pula objetos estáticos (como o ATM) ou que não têm corpo físico
         if (!body || body.isStatic) {
             continue;
         }
 
-        // Se o objeto está na área do mar
         if (isColliding(obj, SINKING_AREA)) {
-            // Se ele ainda não começou a afundar, marque o início
             if (!obj.isSinking) {
                 obj.isSinking = true;
                 obj.sinkingStartTime = now;
             }
         }
 
-        // Se o objeto está afundando, atualize seu progresso
         if (obj.isSinking) {
             const elapsed = now - obj.sinkingStartTime;
             const progress = elapsed / SINKING_DURATION;
 
             if (progress >= 1) {
-                // Se o tempo acabou, remova o objeto completamente
-                if (body) Matter.World.remove(world, body); // Remove do mundo da física
-                delete bodiesMap[obj.uniqueId];             // Remove do nosso mapa de referência
-                gameState.objects.splice(i, 1);             // Remove do estado do jogo
+                if (body) Matter.World.remove(world, body); 
+                delete bodiesMap[obj.uniqueId];           
+                gameState.objects.splice(i, 1);        
             } else {
-                // Caso contrário, envie o progresso para o cliente
                 obj.sinkingProgress = progress;
             }
         }
@@ -1018,7 +988,6 @@ function updateGameState() {
         const playerBody = world.bodies.find(b => b.playerId === id);
         if (!player || !playerBody || !player.input || player.isBeingEaten) continue;
 
-        // NOVO: Handle slow effect expiration
         if (player.slowedUntil && now > player.slowedUntil) {
             player.speed = player.originalSpeedBeforeSlow || player.originalSpeed;
             player.slowedUntil = null;
@@ -1042,12 +1011,11 @@ function updateGameState() {
             }
         }
 
-        // ALTERADO: Lógica de tamanho separada para humanos e zumbis
         const gemBonus = Math.sqrt(Math.max(0, player.gems)) * 0.2;
         if (player.role === 'zombie') {
-            const baseSize = 40; // Base de largura maior
+            const baseSize = 40; 
             player.width = baseSize + gemBonus;
-            player.height = player.width * 1.4; // Proporção altura/largura menor para parecer mais largo
+            player.height = player.width * 1.4; 
         } else {
             const baseSize = 35;
             player.width = baseSize + gemBonus;
@@ -1161,10 +1129,9 @@ function updateGameState() {
 
             let effectiveSpeed = player.isSprinting ? MAX_PLAYER_SPEED : player.speed;
 
-            // ALTERAÇÃO AQUI: Lógica de velocidade por gemas para humanos
             if (player.role === 'human') {
                 const gemsForSpeed = Math.min(player.gems, 50);
-                const speedBonus = (gemsForSpeed / 50) * 0.3; // Bônus máximo de 0.3
+                const speedBonus = (gemsForSpeed / 50) * 0.3; 
                 effectiveSpeed += speedBonus;
             }
 
@@ -1318,7 +1285,6 @@ function updateGameState() {
         }
     }
 
-    // NOVO: Lógica de atualização para as flechas do Blowdart
     for (let i = gameState.blowdartArrows.length - 1; i >= 0; i--) {
         const arrow = gameState.blowdartArrows[i];
         if (arrow.hasHit) continue;
@@ -1590,8 +1556,7 @@ function setupCollisionEvents() {
                         dropHeldItem(human);
                         if (human.isSpying) human.isSpying = false;
 
-                                // ALTERAÇÃO: Lógica de roubo de gemas e velocidade ao infectar
-                        const percentageToSteal = 0.7 + Math.random() * 0.1; // Gera um valor aleatório entre 0.7 (70%) e 0.8 (80%)
+                        const percentageToSteal = 0.7 + Math.random() * 0.1; 
                         const gemsStolen = Math.floor(human.gems * percentageToSteal);
                         const speedLost = (human.speed - ZOMBIE_MIN_SPEED) * percentageToSteal;
 
@@ -1602,7 +1567,6 @@ function setupCollisionEvents() {
                         addGems(zombie, gemsStolen);
                         zombie.speed += speedLost;
                         zombie.originalSpeed += speedLost;
-                                // FIM DA ALTERAÇÃO
 
                         human.role = 'zombie';
                         io.emit('newMessage', {
@@ -1834,14 +1798,12 @@ io.on('connection', (socket) => {
                     id: 'antidote'
                 };
                 break;
-                // NOVO: Caso para o Magic Antidote
             case 'magicAntidote':
                 cost = 3000;
                 itemData = {
                     id: 'magicAntidote'
                 };
                 break;
-                // NOVO: Caso para o Magic Egg
             case 'magicEgg':
                 cost = 2000;
                 itemData = {
@@ -1862,7 +1824,7 @@ io.on('connection', (socket) => {
                     ammo: 200
                 };
                 break;
-            case 'blowdart': // NOVO: Caso para o Blowdart
+            case 'blowdart':
                 cost = 2000;
                 itemData = {
                     id: 'blowdart',
@@ -1972,14 +1934,14 @@ io.on('connection', (socket) => {
                 const wingItem = player.inventory.find(i => i && i.id === 'angelWings');
                 if (wingItem) {
                     const pBody = world.bodies.find(b => b.playerId === player.id);
-                    if (player.isFlyingWithWings) { // Deactivating
+                    if (player.isFlyingWithWings) { 
                         player.isFlyingWithWings = false;
                         player.angelWingsFlightEndsAt = 0;
-                        wingItem.cooldownUntil = now + 20000; // 20s cooldown
+                        wingItem.cooldownUntil = now + 20000;
                         if (pBody) pBody.collisionFilter.mask = 0xFFFFFFFF;
-                    } else if (now > (wingItem.cooldownUntil || 0)) { // Activating
+                    } else if (now > (wingItem.cooldownUntil || 0)) {
                         player.isFlyingWithWings = true;
-                        player.angelWingsFlightEndsAt = now + 10000; // 10s flight
+                        player.angelWingsFlightEndsAt = now + 10000;
                         if (pBody) pBody.collisionFilter.mask = 0;
                     }
                 }
@@ -2487,7 +2449,6 @@ setInterval(() => {
         gameState.timeLeft--;
         for (const player of Object.values(gameState.players)) {
             if (player.role === 'zombie') {
-                // MODIFICADO: Lógica de perda de gemas e velocidade agora usa a nova função
                 const gemLoss = Math.random() * (50 - 10) + 10;
                 removeGems(player, gemLoss);
             } else if (player.role === 'human') {
@@ -2495,7 +2456,6 @@ setInterval(() => {
                 if (player.inventory.some(i => i?.id === 'magicEgg')) {
                     gemGain *= 1.20;
                 }
-                // MODIFICADO: Lógica de ganho de gemas e velocidade agora usa a nova função
                 addGems(player, gemGain);
             }
         }

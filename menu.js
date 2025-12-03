@@ -1,27 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // --- Referências aos novos elementos do menu ---
+    const socket = io();
     const menuUiContainer = document.getElementById('menu-ui-container');
     const loginSection = document.getElementById('login-section');
     const playSection = document.getElementById('play-section');
     const playGameBtn = document.getElementById('playGameBtn');
     const playerNameDisplay = document.getElementById('playerName');
 
-    // --- Não precisamos mais da animação de fundo do menu ---
-    // A função drawCanvas() foi removida.
-
     let currentUser = null;
     let userProfile = null;
     let linkQueue = [];
     let menuProfileIcon = null;
     let menuProfilePanel = null;
-    let menuProfileOverlay = null; // Para o fundo escurecido
+    let menuProfileOverlay = null; 
 
-    // =================================================================
-    // --- CÓDIGO MODIFICADO: Perfil do Menu ---
-    // (O seu código de criação de perfil permanece o mesmo, sem alterações)
-    // =================================================================
     function createMenuProfile() {
-        // --- CRIA O ÍCONE (BOLINHA CIANO) ---
         menuProfileIcon = document.createElement("div");
         menuProfileIcon.style.position = 'fixed';
         menuProfileIcon.style.top = '20px';
@@ -33,10 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
         menuProfileIcon.style.cursor = 'pointer';
         menuProfileIcon.style.zIndex = '2000';
         menuProfileIcon.title = 'Configurações de Usuário';
-        menuProfileIcon.style.display = 'none'; // Inicia oculto, aparece após o login
+        menuProfileIcon.style.display = 'none';
         document.body.appendChild(menuProfileIcon);
 
-        // --- CRIA O OVERLAY (FUNDO ESCURECIDO) ---
         menuProfileOverlay = document.createElement('div');
         menuProfileOverlay.style.display = 'none';
         menuProfileOverlay.style.position = 'fixed';
@@ -48,9 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
         menuProfileOverlay.style.zIndex = '2499';
         document.body.appendChild(menuProfileOverlay);
 
-        // --- CRIA O PAINEL (INICIALMENTE OCULTO) ---
         menuProfilePanel = document.createElement('div');
-        menuProfilePanel.style.display = 'none'; // Oculto por padrão
+        menuProfilePanel.style.display = 'none';
         menuProfilePanel.style.position = 'fixed';
         menuProfilePanel.style.top = '50%';
         menuProfilePanel.style.left = '50%';
@@ -71,7 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
         menuProfilePanel.style.gap = '25px';
         menuProfilePanel.style.border = '1px solid #3a3a3e';
 
-        // --- CONTEÚDO DO PAINEL ---
         menuProfilePanel.innerHTML = `
             <style>
                 .profile-section { background-color: #2a2a2e; padding: 15px; border-radius: 10px; }
@@ -125,9 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         document.body.appendChild(menuProfilePanel);
 
-        // --- LÓGICA DOS BOTÕES E EVENTOS ---
-
-        // Abrir painel
         menuProfileIcon.addEventListener('click', () => {
             if (currentUser && userProfile) {
                 document.getElementById('menuUsernameDisplay').textContent = currentUser;
@@ -148,12 +134,10 @@ document.addEventListener("DOMContentLoaded", () => {
             menuProfileOverlay.style.display = 'none';
         }
 
-        // Fechar painel
         document.getElementById('closeMenuProfilePanel').addEventListener('click', closePanel);
         menuProfileOverlay.addEventListener('click', closePanel);
 
 
-        // Salvar foto
         document.getElementById('menuChangePhotoBtn').addEventListener('click', () => {
             if (!currentUser) return showNotification("⚠️ Você precisa estar logado!", "red");
             const photoUrl = document.getElementById('menuPhotoInput').value.trim();
@@ -163,11 +147,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 photo: photoUrl
             });
             document.getElementById('menuProfilePic').style.backgroundImage = `url('${photoUrl}')`;
-            userProfile.photo = photoUrl; // Atualiza localmente
+            userProfile.photo = photoUrl;
             showNotification("✅ Foto de perfil atualizada!", "green");
         });
 
-        // Salvar nome
         document.getElementById('menuChangeNameBtn').addEventListener('click', () => {
             if (!currentUser) return showNotification("⚠️ Você precisa estar logado!", "red");
             const newName = document.getElementById('menuNameInput').value.trim();
@@ -180,7 +163,6 @@ document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => location.reload(), 2000);
         });
 
-        // Salvar senha
         document.getElementById('menuChangePasswordBtn').addEventListener('click', () => {
             if (!currentUser) return showNotification("⚠️ Você precisa estar logado!", "red");
             const newPass = document.getElementById('menuPasswordInput').value.trim();
@@ -192,7 +174,6 @@ document.addEventListener("DOMContentLoaded", () => {
             showNotification("✅ Senha alterada com sucesso!", "green");
         });
 
-        // Adicionar amigo
         document.getElementById('menuAddFriendBtn').addEventListener('click', () => {
             if (!currentUser) return showNotification("⚠️ Você precisa estar logado para adicionar amigos!", "red");
             const target = document.getElementById('menuFriendInput').value.trim();
@@ -211,13 +192,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    createMenuProfile(); // Chama a função para criar os elementos
-    // =================================================================
-    // --- FIM DO CÓDIGO DO PERFIL ---
-    // =================================================================
+    createMenuProfile();
 
-
-    // --- Login / Registro ---
     const loginBtn = document.getElementById("loginBtn");
     const loginModal = document.getElementById("loginModal");
     const closeModalBtn = document.getElementById("closeModalBtn");
@@ -252,54 +228,35 @@ document.addEventListener("DOMContentLoaded", () => {
     socket.on("registerSuccess", () => showNotification("✅ Conta criada!", "green"));
     socket.on("registerError", msg => showNotification("❌ " + msg, "red"));
 
-    // =================================================================
-    // --- LÓGICA DE LOGIN MODIFICADA ---
-    // =================================================================
     socket.on("loginSuccess", data => {
         currentUser = data.username;
         userProfile = data;
         loginModal.classList.add("hidden");
         showNotification(`🎉 Login realizado! Bem-vindo, ${data.username}!`, "green");
 
-        // Atualiza a UI do menu para mostrar que o jogador está logado
         loginSection.classList.add('hidden');
         playSection.classList.remove('hidden');
         playerNameDisplay.textContent = currentUser;
 
-        // Mostra o ícone de perfil no menu
         if (menuProfileIcon) menuProfileIcon.style.display = 'block';
     });
-    // =================================================================
-    // --- FIM DA LÓGICA DE LOGIN MODIFICADA ---
-    // =================================================================
 
-    // =================================================================
-    // --- NOVA LÓGICA PARA INICIAR O JOGO ---
-    // =================================================================
     playGameBtn.addEventListener('click', () => {
         if (!currentUser) {
             showNotification("⚠️ Você precisa fazer login para jogar!", "red");
             return;
         }
 
-        // Esconde TODA a interface do menu
         const menuUI = document.getElementById('menu-ui');
         if (menuUI) menuUI.style.display = 'none';
 
-        // Esconde o ícone de perfil do menu
         if (menuProfileIcon) menuProfileIcon.style.display = 'none';
-
-        // Limpa o canvas para remover qualquer resquício do menu
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // REMOVIDO: A criação do perfil do jogo foi removida para atender ao pedido 3.
-        // createProfileUI(); 
         updateFriendsUI();
         renderChatFriends();
-
-        // Chama a função para iniciar o seu jogo!
         if (typeof startGame === 'function') {
             console.log("Chamando a função startGame() de game.js...");
             startGame(currentUser);
@@ -307,13 +264,9 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("ERRO: A função startGame() não foi encontrada.");
         }
     });
-    // =================================================================
-    // --- FIM DA NOVA LÓGICA ---
-    // =================================================================
 
     socket.on("loginError", msg => showNotification("❌ " + msg, "red"));
 
-    // --- Perfil do JOGO ---
     const profileContainer = document.getElementById("profileBallContainer");
 
     function createProfileUI() {
@@ -336,12 +289,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function showProfileMenu() {
-        // Evita criar múltiplos menus
         const existingMenu = document.querySelector('.profile-context-menu');
         if (existingMenu) existingMenu.remove();
 
         const menu = document.createElement("div");
-        menu.className = "generic-modal profile-context-menu"; // Adiciona classe para fácil remoção
+        menu.className = "generic-modal profile-context-menu";
         menu.style.backgroundColor = "transparent";
         menu.style.alignItems = "flex-start";
         menu.style.justifyContent = "flex-start";
@@ -362,14 +314,11 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('settingsModal').classList.remove('hidden');
             menu.remove();
         };
-
-        // Remove menu se clicar fora
         menu.addEventListener("click", e => {
             if (e.target === menu) menu.remove();
         });
     }
 
-    // --- Notificações ---
     function showNotification(text, color = "yellow") {
         const container = document.createElement("div");
         container.style.position = 'fixed';
@@ -385,7 +334,6 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => container.remove(), 4000);
     }
 
-    // --- Amigos ---
     const friendInput = document.getElementById("friendInput");
     const sendFriendRequestBtn = document.getElementById("sendFriendRequestBtn");
     const friendsList = document.getElementById("friendsList");
@@ -474,7 +422,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- Chat DM ---
     const chatFriendsContainer = document.getElementById("chatFriends");
     const chatMessagesFloating = document.getElementById("chatMessagesFloating");
     const chatInputFloating = document.getElementById("chatInputFloating");
