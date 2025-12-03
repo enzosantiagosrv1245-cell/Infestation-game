@@ -116,7 +116,6 @@ const objectSprites = {
     park_bench: parkBenchSprite,
     pool_table: poolTableSprite
 };
-
 let myId = null;
 let gameState = {
     players: {},
@@ -156,6 +155,16 @@ const chatInput = document.getElementById('chatInput');
 let isChatting = false;
 let chatMessages = [];
 const MAX_MESSAGES = 10;
+let gameLoopStarted = false;
+
+socket.on('connect', () => {
+    myId = socket.id;
+    
+    if (!gameLoopStarted) {
+        gameLoopStarted = true;
+        gameLoop();
+    }
+});
 
 socket.on('connect', () => {
     myId = socket.id;
@@ -2093,6 +2102,11 @@ function gameLoop() {
 }
 
 
-function startGame() {
-    gameLoop();
-}
+socket.on('connect', () => {
+    myId = socket.id;
+    
+    if (!gameLoopStarted) {
+        gameLoopStarted = true;
+        gameLoop();
+    }
+});
